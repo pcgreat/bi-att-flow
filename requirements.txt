@@ -1,4 +1,5 @@
 tensorflow>=1.1.0
-nltk
-tqdm
-jinja2
+flask==0.12.2
+nltk==3.2.3
+jinja2==2.9.6
+tqdm==4.14.0

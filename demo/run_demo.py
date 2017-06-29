@@ -1,9 +1,11 @@
-from flask import Flask, render_template, redirect, request, jsonify
-from squad.demo_prepro import prepro
-from basic.demo_cli import Demo
 import json
 
-app = Flask(__name__)
+from flask import Flask, render_template, request, jsonify
+
+from demo.demo_cli import Demo
+from squad.demo_prepro import prepro
+
+app = Flask(__name__, static_folder="static", template_folder="templates")
 shared = json.load(open("data/squad_demo/shared_test.json", "r"))
 contextss = [""]
 context_questions = [""]

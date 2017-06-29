@@ -1,7 +1,10 @@
 # Bi-directional Attention Flow for Machine Comprehension
  
-- This is originally forked from https://github.com/allenai/bi-att-flow
-- The purpose of this repo is to support Tensorflow 1.2.0 (>=1.0.0) and clean up the code, and extend for other purposes.
+- This is **originally** forked from https://github.com/allenai/bi-att-flow
+- Support **Tensorflow 1.2.0 (>=1.0.0)** and clean up the code.
+- **Pretrained weights** are provided
+- **Demo** is integrated into master branch
+- =================================
 - This the original implementation of [Bi-directional Attention Flow for Machine Comprehension][paper].
 - The CodaLab worksheet for the [SQuAD Leaderboard][squad] submission is available [here][worksheet].
 - Please contact [Minjoon Seo][minjoon] ([@seominjoon][minjoon-github]) for questions and suggestions.
@@ -16,6 +19,7 @@
 - nltk (NLP tools, verified on 3.2.1)
 - tqdm (progress bar, verified on 4.7.4)
 - jinja2 (for visaulization; if you only train and test, not needed)
+- install the dependencies via `pip install -r requirements.txt`
 
 ## 1. Pre-processing
 First, prepare data. Donwload SQuAD data and GloVe and nltk corpus
@@ -80,25 +84,18 @@ python squad/evaluate-v1.1.py $HOME/data/squad/dev-v1.1.json out/basic/00/answer
 ```
 
 ### 3.1 Loading from pre-trained weights
-Instead of training the model yourself, you can choose to use pre-trained weights that were used for [SQuAD Leaderboard][squad] submission.
-Refer to [this worksheet][worksheet] in CodaLab to reproduce the results.
-If you are unfamiliar with CodaLab, follow these simple steps (given that you met all prereqs above):
 
-1. Download `save.zip` from the [worksheet][worksheet] and unzip it in the current directory.
-2. Copy `glove.6B.100d.txt` from your glove data folder (`$HOME/data/glove/`) to the current directory.
-3. To reproduce single model:
-  
-  ```
-  basic/run_single.sh $HOME/data/squad/dev-v1.1.json single.json
-  ```
-  
-  This writes the answers to `single.json` in the current directory. You can then use the official evaluator to obtain EM and F1 scores. If you want to run on GPU (~5 mins), change the value of batch_size flag in the shell file to a higher number (60 for 12GB GPU RAM). 
-4. Similarly, to reproduce ensemble method:
-  
-  ```
-  basic/run_ensemble.sh $HOME/data/squad/dev-v1.1.json ensemble.json 
-  ```
-  If you want to run on GPU, you should run the script sequentially by removing '&' in the forloop, or you will need to specify different GPUs for each run of the for loop.
+Instead of training the model yourself, you can choose to use **pre-trained weights**. Since they are not that big, I just put them in this repo. They are here `out/basic/00/save/basic-10000.*`
+
+Note that these weights are not from the original author. The original author's pretrained weights are for old version of tensorflow, so I replaced them with mine.
+
+For more details, please see `Demo`
+
+### 4. Demo
+To Run demo, just execute:
+```
+PYTHONPATH=. python3 demo/run_demo.py
+```
 
 ## Results
 
@@ -149,11 +146,7 @@ python -m basic.cli --mode train --noload --num_gpus 3 --batch_size 20
 Similarly, you can speed up your testing by:
 ```
 python -m basic.cli --num_gpus 3 --batch_size 20 
-```
-
-## Demo
-For now, please refer to the `demo` branch of this repository.
- 
+``` 
 
 [multi-gpu]: https://www.tensorflow.org/versions/r0.11/tutorials/deep_cnn/index.html#training-a-model-using-multiple-gpu-cards
 [squad]: http://stanford-qa.com
