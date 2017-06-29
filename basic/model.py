@@ -472,15 +472,17 @@ class Model(object):
 
         for i, qi in enumerate(batch.data['q']):
             for j, qij in enumerate(qi):
-                q[i, j] = _get_word(qij)
-                q_mask[i, j] = True
+                if j < JQ: # JQ is the sentence length, words longer than that will be ignored
+                    q[i, j] = _get_word(qij)
+                    q_mask[i, j] = True
 
         for i, cqi in enumerate(batch.data['cq']):
             for j, cqij in enumerate(cqi):
                 for k, cqijk in enumerate(cqij):
-                    cq[i, j, k] = _get_char(cqijk)
-                    if k + 1 == config.max_word_size:
-                        break
+                    if j < JQ:  # JQ is the sentence length, words longer than that will be ignored
+                        cq[i, j, k] = _get_char(cqijk)
+                        if k + 1 == config.max_word_size:
+                            break
 
         if supervised:
             assert np.sum(~(x_mask | ~wy)) == 0
