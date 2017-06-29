@@ -103,24 +103,6 @@ flags.DEFINE_bool("c2q_att", True, "context-to-question attention? [True]")
 flags.DEFINE_bool("dynamic_att", False, "Dynamic attention [False]")
 
 
-# flags.DEFINE_integer("char_filter_height", 5, "Char filter height [5]")
-# flags.DEFINE_string("model", "2", "config 1 |2 [2]")
-# flags.DEFINE_bool("feed_gt", False, "feed gt prev token during training [False]")
-# flags.DEFINE_bool("feed_hard", False, "feed hard argmax prev token during testing [False]")
-# flags.DEFINE_bool("two_prepro_layers", False, "Use two layers for preprocessing? [False]")
-# flags.DEFINE_bool("aug_att", False, "Augment attention layers with more features? [False]")
-# flags.DEFINE_string("prev_mode", "a", "prev mode gy | y | a [a]")
-# flags.DEFINE_bool("sh", False, "use superhighway [False]")
-# # flags.DEFINE_bool("static_att", True, "static attention [True]")
-# flags.DEFINE_bool("late", False, "Late fusion? [False]")
-# # flags.DEFINE_integer("early_stop", 4, "early stop [4]")
-# #
-# #flags.DEFINE_boolean("draft", False, "Draft for quick testing? [False]")
-# # flags.DEFINE_integer("eval_num_batches", 0, "eval num batches [100]")
-
-
-
-
 class Demo(object):
     def __init__(self):
         config = flags.FLAGS
