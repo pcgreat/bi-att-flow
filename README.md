@@ -1,5 +1,7 @@
 # Bi-directional Attention Flow for Machine Comprehension
  
+- This is originally forked from https://github.com/allenai/bi-att-flow
+- The purpose of this repo is to support Tensorflow 1.2 (>=1.0) and clean up the code, and extend for other purposes.
 - This the original implementation of [Bi-directional Attention Flow for Machine Comprehension][paper] (Seo et al., 2016).
 - This is tensorflow v1.1.0 comaptible version. This is not compatible with previous trained models, 
 so if you want to use them, go to [v0.2.1][v0.2.1]. 
