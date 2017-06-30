@@ -2,10 +2,14 @@ import json
 
 from flask import Flask, render_template, request, jsonify
 
-from demo.demo_cli import Demo
+from demo.Demo import Demo
+from demo.demo_cli import config
 from squad.demo_prepro import prepro
 
-app = Flask(__name__, static_folder="static", template_folder="templates")
+########################################################################
+### These are only used for displaying sample paragraphs and questions
+########################################################################
+
 shared = json.load(open("data/squad_demo/shared_test.json", "r"))
 contextss = [""]
 context_questions = [""]
@@ -15,7 +19,15 @@ for i in range(len(shared['contextss'])):
     context_questions.append(shared['context_questions'][i][j])
 titles = ["Write own paragraph"] + shared["titles"]
 
-demo = Demo()
+########################################################################
+### Demo loads the pretrained weight
+########################################################################
+
+# construct the flask app
+app = Flask(__name__, static_folder="static", template_folder="templates")
+
+# get config and construct the Demo
+demo = Demo(config)
 
 
 def getTitle(ai):

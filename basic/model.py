@@ -472,7 +472,7 @@ class Model(object):
 
         for i, qi in enumerate(batch.data['q']):
             for j, qij in enumerate(qi):
-                if j < JQ: # JQ is the sentence length, words longer than that will be ignored
+                if j < JQ:  # JQ is the sentence length, words longer than that will be ignored
                     q[i, j] = _get_word(qij)
                     q_mask[i, j] = True
 

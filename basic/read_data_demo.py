@@ -16,9 +16,10 @@ def read_data(config, data_type, ref, data=None, data_filter=None, data_set=None
         data_path = os.path.join(config.data_dir, "data_{}.json".format(data_type))
         with open(data_path, 'r') as fh:
             data = json.load(fh)
-    if data_set is None:
-        num_examples = len(next(iter(data.values())))
-        if data_filter is None:
+    if data_set is None:  # For demo, data_set=None
+        num_examples = len(next(iter(data.values())))  # count num of examples
+
+        if data_filter is None:  # For demo, data_filter is None
             valid_idxs = range(num_examples)
         else:
             mask = []
@@ -29,8 +30,11 @@ def read_data(config, data_type, ref, data=None, data_filter=None, data_set=None
                 mask.append(data_filter(each, shared))  # FIX this?
             valid_idxs = [idx for idx in range(len(mask)) if mask[idx]]
 
-        # print("Loaded {}/{} examples from {}".format(len(valid_idxs), num_examples, data_type))
+        # For demo, data_type is "demo"
+        print("Loaded {}/{} examples from {}".format(len(valid_idxs), num_examples, data_type))
+        # Read trained word vectors, or glove for unk
         shared = read_shared_data(config, data_type, ref, data_filter)
+        # shared is a dictionary, containing all the wv, idx, etc..
         data_set = DataSet(data, data_type, shared=shared, valid_idxs=valid_idxs)
     else:
         data_set.set_data(data)
@@ -38,12 +42,13 @@ def read_data(config, data_type, ref, data=None, data_filter=None, data_set=None
 
 
 def read_shared_data(config, data_type, ref, data_filter=None):
+    """ Load word vectors dictionary; if not found, use Glove ones """
     shared_data_type = 'test' if data_type == 'demo' else data_type
-    shared_path = os.path.join(config.data_dir, "shared_{}.json".format(shared_data_type))
+    shared_path = os.path.join(config.data_dir, "shared_{}.json".format(shared_data_type))  # shared_test.json
     with open(shared_path, 'r') as fh:
         shared = json.load(fh)
     shared_path = config.shared_path or os.path.join(config.out_dir, "shared.json")
-    if not ref:
+    if not ref:  # For demo, ref=True
         word2vec_dict = shared['lower_word2vec'] if config.lower_word else shared['word2vec']
         word_counter = shared['lower_word_counter'] if config.lower_word else shared['word_counter']
         char_counter = shared['char_counter']
@@ -69,7 +74,7 @@ def read_shared_data(config, data_type, ref, data_filter=None):
         shared['char2idx'][UNK] = 1
         json.dump({'word2idx': shared['word2idx'], 'char2idx': shared['char2idx']}, open(shared_path, 'w'))
     else:
-        new_shared = json.load(open(shared_path, 'r'))
+        new_shared = json.load(open(shared_path, 'r'))  # For demo, always go here, which uses shared.json, trained wv
         for key, val in new_shared.items():
             shared[key] = val
 
@@ -83,7 +88,7 @@ def read_shared_data(config, data_type, ref, data_filter=None):
         word2vec_dict = shared['lower_word2vec'] if config.lower_word else shared['word2vec']
         new_word2idx_dict = shared['new_word2idx']
         idx2vec_dict = {idx: word2vec_dict[word] for word, idx in new_word2idx_dict.items()}
-        # print("{}/{} unique words have corresponding glove vectors.".format(len(idx2vec_dict), len(word2idx_dict)))
+        print("{}/{} unique words have corresponding glove vectors.".format(len(idx2vec_dict), len(word2vec_dict)))
         new_emb_mat = np.array([idx2vec_dict[idx] for idx in range(len(idx2vec_dict))], dtype='float32')
         shared['new_emb_mat'] = new_emb_mat
     return shared

@@ -1,14 +1,4 @@
-import os
-
-import numpy as np
 import tensorflow as tf
-
-from basic.evaluator import ForwardEvaluator
-from basic.graph_handler import GraphHandler
-from basic.main import set_dirs
-from basic.model import get_multi_gpu_models
-from basic.read_data import update_config
-from basic.read_data_demo import read_data
 
 flags = tf.app.flags
 
@@ -102,60 +92,5 @@ flags.DEFINE_bool("q2c_att", True, "question-to-context attention? [True]")
 flags.DEFINE_bool("c2q_att", True, "context-to-question attention? [True]")
 flags.DEFINE_bool("dynamic_att", False, "Dynamic attention [False]")
 
-
-class Demo(object):
-    def __init__(self):
-        config = flags.FLAGS
-        config.out_dir = os.path.join(config.out_base_dir, config.model_name, str(config.run_id).zfill(2))
-        config.max_sent_size = config.sent_size_th
-        config.max_num_sents = config.num_sents_th
-        config.max_ques_size = config.ques_size_th
-        config.max_word_size = config.word_size_th
-        config.max_para_size = config.para_size_th
-
-        self.config = config
-        self.test_data = None
-        self.data_ready(update=True)
-
-        config = self.config
-
-        set_dirs(config)
-        models = get_multi_gpu_models(config)
-        self.evaluator = ForwardEvaluator(config, models[0], tensor_dict=models[0].tensor_dict if config.vis else None)
-
-        self.sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True))
-        self.graph_handler = GraphHandler(config, models[0])
-        self.graph_handler.initialize(self.sess)
-        self.config = config
-
-    def data_ready(self, data=None, update=False):
-
-        config = self.config
-        config.batch_size = 1
-        test_data = read_data(self.config, 'demo', True, data=data, data_set=self.test_data)
-
-        if update:
-            update_config(self.config, [test_data])
-            if config.use_glove_for_unk:
-                word2vec_dict = test_data.shared['lower_word2vec'] if config.lower_word else test_data.shared[
-                    'word2vec']
-                new_word2idx_dict = test_data.shared['new_word2idx']
-                idx2vec_dict = {idx: word2vec_dict[word] for word, idx in new_word2idx_dict.items()}
-                new_emb_mat = np.array([idx2vec_dict[idx] for idx in range(len(idx2vec_dict))], dtype='float32')
-                config.new_emb_mat = new_emb_mat
-        self.config = config
-        self.test_data = test_data
-
-    def run(self, data):
-        self.data_ready(data=data)
-        test_data = self.test_data
-        config = self.config
-        e = None
-        for multi_batch in test_data.get_batches(config.batch_size, num_batches=1, cluster=config.cluster):
-            ei = self.evaluator.get_evaluation(self.sess, multi_batch)
-            e = ei if e is None else e + ei
-        return (e.id2answer_dict[0])
-
-
-if __name__ == "__main__":
-    tf.app.run()
+# summarize the config
+config = flags.FLAGS
